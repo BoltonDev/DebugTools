@@ -9,7 +9,7 @@ using System.Text;
 using LabApi.Features;
 using LabApi.Features.Console;
 
-internal static class EventLogger
+public static class EventLogger
 {
     public static readonly Dictionary<EventInfo, Delegate> EventHandlers = new();
     public static readonly Dictionary<EventInfo, Delegate> CancelledEvents = new();
@@ -25,9 +25,19 @@ internal static class EventLogger
             {
                 Type handlerType = eventInfo.EventHandlerType;
 
-                MethodInfo handlerMethod = handlerType.IsGenericType ? 
-                    typeof(EventLogger).GetMethod(nameof(EventLogger.HandleEventTEventArgs)).MakeGenericMethod(handlerType.GetGenericArguments()) : 
-                    typeof(EventLogger).GetMethod(nameof(EventLogger.HandleEvent));
+                MethodInfo handlerMethod;
+                if (handlerType.IsGenericType)
+                {
+                    handlerMethod = DebugTools.ObjectDumpingEnabled
+                        ? typeof(EventLogger).GetMethod(nameof(EventLogger.HandleEventTEventArgsDump))
+                            .MakeGenericMethod(handlerType.GetGenericArguments())
+                        : typeof(EventLogger).GetMethod(nameof(EventLogger.HandleEventTEventArgs))
+                            .MakeGenericMethod(handlerType.GetGenericArguments());
+                }
+                else
+                {
+                    handlerMethod = typeof(EventLogger).GetMethod(nameof(EventLogger.HandleEvent));   
+                }
 
                 if (handlerMethod == null)
                     continue;
@@ -51,13 +61,24 @@ internal static class EventLogger
         EventHandlers.Clear();
     }
 
+    public static void HandleEventTEventArgsDump<T>(T ev)
+        where T : EventArgs
+    {
+        Logger.Raw(ObjectDumper.Dump(ev, new DumpOptions
+        {
+            IgnoreIndexers = false,
+            MaxLevel = DebugTools.Instance.Config.DebugLevel,
+            UseTypeFullName = true
+        }), ConsoleColor.Cyan);
+    }
+
     public static void HandleEventTEventArgs<T>(T ev)
         where T : EventArgs
     {
         StringBuilder builder = new();
         builder.Append($"[DebugTools] [EventLogger] Event: {ev.GetType().Name.Replace("EventArgs", "")}\n");
         builder.Append("Args:\n");
-    
+
         foreach (PropertyInfo propertyInfo in ev.GetType().GetProperties())
         {
             builder.Append($"- {propertyInfo.Name}: {propertyInfo.GetValue(ev)}\n");
