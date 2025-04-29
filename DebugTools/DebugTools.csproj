@@ -61,7 +61,6 @@
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Lib.Harmony" Version="2.3.5" />
       <PackageReference Include="ObjectDumper.NET" Version="4.3.2" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>

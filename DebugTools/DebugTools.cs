@@ -1,8 +1,6 @@
 ﻿namespace DebugTools;
 
 using System;
-using System.Reflection;
-using HarmonyLib;
 using LabApi.Features;
 using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
@@ -10,8 +8,6 @@ using Utils.NonAllocLINQ;
 
 public class DebugTools : Plugin<Config>
 {
-    private Harmony _harmony;
-
     public override string Name { get; } = "DebugTools";
     public override string Description { get; } = "";
     public override string Author { get; } = "Bolton";
@@ -25,9 +21,6 @@ public class DebugTools : Plugin<Config>
     {
         Instance = this;
         ObjectDumpingEnabled = PluginLoader.Dependencies.Any(a => a.FullName.Contains("ObjectDumping"));
-
-        _harmony = new Harmony("fr.bolton.debug-tools");
-        _harmony.PatchAll();
 
         EventLogger.RegisterEvents();
     }
