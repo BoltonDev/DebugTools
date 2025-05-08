@@ -1,4 +1,4 @@
-﻿namespace DebugTools.Commands;
+﻿namespace DebugTools.Commands.EventCommands;
 
 using System;
 using System.Collections.Generic;
@@ -6,20 +6,18 @@ using System.Reflection;
 using CommandSystem;
 using LabApi.Events.Arguments.Interfaces;
 
-[CommandHandler(typeof(RemoteAdminCommandHandler))]
-public class CancelEventCommand : ICommand
+[CommandHandler(typeof(EventParent))]
+public class Cancel : ICommand, IUsage
 {
-    public string Command { get; } = "cancelevent";
-    public string[] Aliases { get; } = { "ce", "cevent" };
-    public string Description { get; } = "Allows you to prevent the execution of an event (must implement ICancellableEvent).";
+    public string Command { get; } = "cancel";
+    public string[] Aliases { get; } = { "c" };
+    public string Description { get; } = "Prevents the execution of an event. EventArgs must implement ICancellableEvent";
+    public string Usage { get; } = "<event_name>";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (!sender.CheckPermission(PlayerPermissions.ServerConsoleCommands))
-        {
-            response = "You do not have permission to use this command.";
+        if (!sender.CheckPermission(PlayerPermissions.ServerConsoleCommands, out response))
             return false;
-        }
 
         if (arguments.Count < 1)
         {
@@ -47,7 +45,7 @@ public class CancelEventCommand : ICommand
                 return false;
             }
 
-            Delegate handler = Delegate.CreateDelegate(eventHandlerType, typeof(CancelEventCommand).GetMethod(nameof(CancelEventCommand.HandleICancellableEvent)).MakeGenericMethod(eventHandlerType.GetGenericArguments()));
+            Delegate handler = Delegate.CreateDelegate(eventHandlerType, typeof(Cancel).GetMethod(nameof(Cancel.HandleICancellableEvent)).MakeGenericMethod(eventHandlerType.GetGenericArguments()));
             eventHandler.Key.AddEventHandler(DebugTools.Instance, handler);
 
             EventLogger.CancelledEvents.Add(eventHandler.Key, handler);

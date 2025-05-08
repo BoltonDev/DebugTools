@@ -46,18 +46,38 @@
         <Reference Include="LabApi">
           <HintPath>$(SL_REFERENCES)\LabApi.dll</HintPath>
         </Reference>
+        <Reference Include="Mirror">
+          <HintPath>$(SL_REFERENCES)\Mirror.dll</HintPath>
+        </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
         <Reference Include="System.Xml"/>
+        <Reference Include="UnityEngine.CoreModule">
+          <HintPath>$(SL_REFERENCES)\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+          <HintPath>..\..\..\refs\UnityEngine.PhysicsModule.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Commands\CancelEventCommand.cs" />
-        <Compile Include="Commands\ListCancelEventCommand.cs" />
-        <Compile Include="Commands\UnCancelEventCommand.cs" />
+        <Compile Include="Commands\ItemCommands\Info.cs" />
+        <Compile Include="Commands\IUsage.cs" />
+        <Compile Include="Commands\ObjetCommands\Get.cs" />
+        <Compile Include="Commands\ObjetCommands\ObjetParent.cs" />
+        <Compile Include="Commands\ObjetCommands\Set.cs" />
+        <Compile Include="Commands\ParentBaseCommand.cs" />
+        <Compile Include="Commands\DebugToolsParent.cs" />
+        <Compile Include="Commands\EventCommands\Cancel.cs" />
+        <Compile Include="Commands\EventCommands\EventParent.cs" />
+        <Compile Include="Commands\EventCommands\ListCancelled.cs" />
+        <Compile Include="Commands\EventCommands\UnCancel.cs" />
+        <Compile Include="Commands\ItemCommands\ItemParent.cs" />
         <Compile Include="Config.cs" />
         <Compile Include="DebugTools.cs" />
         <Compile Include="EventLogger.cs" />
+        <Compile Include="Extensions\ComponentExtension.cs" />
+        <Compile Include="Extensions\ObjectExtension.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>

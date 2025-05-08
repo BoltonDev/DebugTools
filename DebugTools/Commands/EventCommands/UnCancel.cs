@@ -1,24 +1,22 @@
-﻿namespace DebugTools.Commands;
+﻿namespace DebugTools.Commands.EventCommands;
 
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using CommandSystem;
 
-[CommandHandler(typeof(RemoteAdminCommandHandler))]
-public class UnCancelEventCommand : ICommand
+[CommandHandler(typeof(EventParent))]
+public class UnCancel : ICommand, IUsage
 {
-    public string Command { get; } = "uncancelevent";
-    public string[] Aliases { get; } = { "uce", "ucevent" };
-    public string Description { get; } = "Allows you to restore the execution of an event.";
+    public string Command { get; } = "uncancel";
+    public string[] Aliases { get; } = { "uc", "u" };
+    public string Description { get; } = "Restores the execution of an event";
+    public string Usage { get; } = "<event_name>";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (!sender.CheckPermission(PlayerPermissions.ServerConsoleCommands))
-        {
-            response = "You do not have permission to use this command.";
+        if (!sender.CheckPermission(PlayerPermissions.ServerConsoleCommands, out response))
             return false;
-        }
 
         if (arguments.Count < 1)
         {

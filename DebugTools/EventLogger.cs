@@ -28,6 +28,9 @@ public static class EventLogger
                 MethodInfo handlerMethod;
                 if (handlerType.IsGenericType)
                 {
+                    if (DebugTools.Instance.Config.PreventEventLogging.Contains(handlerType.GetGenericArguments()[0].Name.Replace("EventArgs", string.Empty)))
+                        continue;
+
                     handlerMethod = DebugTools.ObjectDumpingEnabled
                         ? typeof(EventLogger).GetMethod(nameof(EventLogger.HandleEventTEventArgsDump))
                             .MakeGenericMethod(handlerType.GetGenericArguments())
@@ -76,12 +79,19 @@ public static class EventLogger
         where T : EventArgs
     {
         StringBuilder builder = new();
-        builder.Append($"[DebugTools] [EventLogger] Event: {ev.GetType().Name.Replace("EventArgs", "")}\n");
-        builder.Append("Args:\n");
+        builder.AppendLine($"[DebugTools] [EventLogger] Event: {ev.GetType().Name.Replace("EventArgs", "")}");
+        builder.AppendLine("Args:");
 
         foreach (PropertyInfo propertyInfo in ev.GetType().GetProperties())
         {
-            builder.Append($"- {propertyInfo.Name}: {propertyInfo.GetValue(ev)}\n");
+            try
+            {
+                builder.AppendLine($"- {propertyInfo.Name}: {propertyInfo.GetValue(ev)}");
+            }
+            catch (Exception)
+            {
+                builder.AppendLine($"- {propertyInfo.Name}: <Unsupported>");
+            }
         }
 
         Logger.Raw(builder.ToString(), ConsoleColor.Cyan);

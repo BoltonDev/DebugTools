@@ -28,7 +28,6 @@ public class DebugTools : Plugin<Config>
     public override void Disable()
     {
         EventLogger.UnregisterEvents();
-
         Instance = null;
     }
 }
